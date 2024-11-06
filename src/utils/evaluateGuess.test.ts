@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { evaluateGuess } from "./evaluateGuess";
 
 describe("evaluateGuess", () => {

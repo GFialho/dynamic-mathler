@@ -13,14 +13,19 @@ export interface EvaluationResult {
  */
 export function evaluateGuess(
   guess: string,
-  solution: string
+  solution: string | undefined
 ): EvaluationResult {
   const guessChars = guess.split("");
-  const solutionChars = solution.split("");
-
   const statuses: EvaluationStatus[] = new Array(guessChars.length).fill(
     "absent"
   );
+
+  if (!solution)
+    return {
+      statuses,
+    };
+
+  const solutionChars = solution.split("");
 
   // Map to keep track of character counts in the solution
   const solutionCharCount: { [char: string]: number } = {};

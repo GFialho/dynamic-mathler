@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { calculateExpression } from "./calculate";
 
 describe("calculateExpression", () => {

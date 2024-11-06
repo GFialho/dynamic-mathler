@@ -21,7 +21,9 @@ const HomePage: React.FC = () => {
   }, [level]);
 
   // Get the puzzle for the current level
-  const [solution, setSolution] = useState<string>(getPuzzleByLevel(level));
+  const [solution, setSolution] = useState<string | undefined>(
+    getPuzzleByLevel(level)
+  );
 
   const [guesses, setGuesses] = useState<string[]>([]);
   const [evaluations, setEvaluations] = useState<EvaluationResult[]>([]);

@@ -5,8 +5,11 @@
  * @param expression - The mathematical expression to evaluate.
  * @returns The numerical result of the expression, or null if invalid.
  */
-export function calculateExpression(expression: string): number | null {
+export function calculateExpression(
+  expression: string | undefined
+): number | null {
   try {
+    if (!expression) return null;
     // Basic validation to prevent code injection
     if (/[^0-9+\-*/().\s]/.test(expression)) return null;
 
