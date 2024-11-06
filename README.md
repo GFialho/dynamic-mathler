@@ -25,7 +25,7 @@ Welcome to the **Mathler Game - Hack Nasa** repository! This project is a web-ba
 
 ## Demo
 
-[Live Demo](https://hacknasa.vercel.app/) 
+[Live Demo](https://hacknasa.vercel.app/)
 
 ---
 
@@ -54,8 +54,8 @@ Welcome to the **Mathler Game - Hack Nasa** repository! This project is a web-ba
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/yourusername/mathler-game.git
-   cd mathler-game
+   git clone https://github.com/GFialho/dynamic-mathler.git
+   cd dynamic-mathler
    ```
 
 2. **Install Dependencies**
@@ -105,7 +105,7 @@ http://localhost:3000
 ## Project Structure
 
 ```
-mathler-game/
+dynamic-mathler/
 ├── src/
 │   ├── app/
 │   │   └── page.tsx           # Main application page
@@ -139,6 +139,8 @@ mathler-game/
 
 ## Running Jest Tests
 
+![Testing coverage](src/assets/jest.png)
+
 We use Jest for unit testing our utility functions to ensure they work correctly. Jest tests are already created and cover critical parts of the game's logic.
 
 Run Jest Tests
@@ -147,7 +149,7 @@ Run Jest Tests
 npm run test
 ```
 
-This command runs all tests in the tests/ directory that match the pattern \*.test.ts.
+This command runs all tests in directory that match the pattern \*.test.ts.
 
 ## Test Coverage
 
@@ -219,7 +221,7 @@ Contributions are welcome! Please follow these steps:
 **Your Name**
 
 - **Email**: gabriel.pinto.fialho@gmail.com
-- **GitHub**: [yourusername](https://github.com/GFialho)
+- **GitHub**: [GFialho](https://github.com/GFialho)
 - **LinkedIn**: [Gabriel Fialho](https://www.linkedin.com/in/gabriel-fialho-engineer)
 
 ---
