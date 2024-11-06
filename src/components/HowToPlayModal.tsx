@@ -17,7 +17,7 @@ const HowToPlayModal: React.FC = () => {
   const terminalLines = [
     "Welcome to Mathler!",
     "",
-    "Try to find the hidden calculation in 6 guesses!",
+    "You are on a top secret mission that requires hacking Nasa. You need to find the hidden calculation in 6 guesses!",
     "After each guess, the color of the tiles will change to show how close you are to the solution.",
     "",
     "Green tiles are in the correct place.",

@@ -116,7 +116,12 @@ export const puzzles = [
  * @param level The current level of the game.
  * @returns The equation string for the current level.
  */
-export function getPuzzleByLevel(level: number): string {
+export function getPuzzleByLevel(level: number): string | undefined {
+  // Validate level
+  if (!Number.isInteger(level) || level <= 0) {
+    return undefined;
+  }
+
   if (level <= puzzles.length) {
     return puzzles[level - 1];
   } else {

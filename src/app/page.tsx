@@ -83,7 +83,7 @@ const HomePage: React.FC = () => {
     if (level === 1) {
       newInitialLines.push({
         type: "output",
-        content: `$ Welcome back, hacker!`,
+        content: `$ Welcome, hacker!`,
       });
     }
     newInitialLines.push({
@@ -235,6 +235,8 @@ const HomePage: React.FC = () => {
       onEnter();
     } else if (key === "C") {
       setCurrentGuess("");
+    } else if (key === "Backspace") {
+      setCurrentGuess((prev) => prev.slice(0, -1));
     } else {
       if (currentGuess.length < 8) {
         setCurrentGuess((prev) => prev + key);
