@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import bg from "@/assets/bg.jpg";
+import styles from "./HowToPlayModal.module.css"; // Import the CSS module
 
 const HowToPlayModal: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -69,7 +70,7 @@ const HowToPlayModal: React.FC = () => {
         </Dialog.Overlay>
 
         <Dialog.Content
-          className="fixed inset-0 flex items-center justify-center"
+          className={`fixed inset-0 flex items-center justify-center ${styles.dialogSlideIn}`}
           onKeyDown={handleKeyDown}
           tabIndex={0}
         >
