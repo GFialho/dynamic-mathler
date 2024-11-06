@@ -5,7 +5,7 @@ import HowToPlayModal from "@/components/HowToPlayModal";
 import Keyboard from "@/components/Keyboard";
 import { calculateExpression } from "@/utils/calculate";
 import { evaluateGuess, EvaluationResult } from "@/utils/evaluateGuess";
-import { getPuzzleByLevel, puzzles } from "@/utils/puzzles";
+import { getPuzzleByLevel } from "@/utils/puzzles";
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import ProgressBar from "@/components/ProgressBar";
