@@ -25,9 +25,9 @@ const GameGrid: React.FC<GameGridProps> = ({
   });
 
   return (
-    <div className="grid grid-rows-6 gap-2 text-black">
+    <div className="grid grid-rows-6 gap-1 text-black my-4 w-3/4 self-center items-center justify-center">
       {rows.map((row, rowIndex) => (
-        <div key={rowIndex} className="grid grid-cols-8 gap-4">
+        <div key={rowIndex} className="grid grid-cols-8 gap-1">
           {Array.from({ length: 8 }, (_, colIndex) => (
             <Tile
               key={colIndex}

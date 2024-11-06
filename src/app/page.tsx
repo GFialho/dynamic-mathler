@@ -44,28 +44,32 @@ const HomePage: React.FC = () => {
   const onEnter = () => {
     if (currentGuess.length === 0) return;
 
-    const result = calculateExpression(currentGuess);
-    const solutionResult = calculateExpression(solution);
+    // Simulate processing delay
+    setMessage("Processing...");
+    setTimeout(() => {
+      const result = calculateExpression(currentGuess);
+      const solutionResult = calculateExpression(solution);
 
-    if (result === null) {
-      setMessage("Invalid Expression");
-      return;
-    }
+      if (result === null) {
+        setMessage("Invalid command");
+        return;
+      }
 
-    if (result !== solutionResult) {
-      setMessage(`Expression does not equal ${solutionResult}`);
-      return;
-    }
+      if (result !== solutionResult) {
+        setMessage(`Command failed: Result does not equal ${solutionResult}`);
+        return;
+      }
 
-    const evaluation = evaluateGuess(currentGuess, solution);
-    setGuesses([...guesses, currentGuess]);
-    setEvaluations([...evaluations, evaluation]);
-    setCurrentGuess("");
-    setMessage("");
+      const evaluation = evaluateGuess(currentGuess, solution);
+      setGuesses([...guesses, currentGuess]);
+      setEvaluations([...evaluations, evaluation]);
+      setCurrentGuess("");
+      setMessage("");
 
-    if (currentGuess === solution || guesses.length + 1 === 6) {
-      setMessage(`Game Over! The solution was ${solution}`);
-    }
+      if (currentGuess === solution || guesses.length + 1 === 6) {
+        setMessage(`Mission Complete! The solution was ${solution}`);
+      }
+    }, 1000); // Simulate delay
   };
 
   const handleKeyPress = (key: string) => {
@@ -83,19 +87,38 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-8">
-      <h1 className="text-2xl font-bold text-center mb-4">Mathler Clone</h1>
-      <p className="text-center mb-4">
-        Find the hidden calculation that equals {calculateExpression(solution)}
-      </p>
+    <div className="w-full h-screen bg-black text-green-500 font-mono overflow-hidden">
       <HowToPlayModal />
+      {/* Terminal Header */}
+      <div className="flex items-center h-6 bg-gray-900 px-2">
+        <div className="flex space-x-2">
+          <span className="w-3 h-3 bg-red-500 rounded-full inline-block"></span>
+          <span className="w-3 h-3 bg-yellow-500 rounded-full inline-block"></span>
+          <span className="w-3 h-3 bg-green-500 rounded-full inline-block"></span>
+        </div>
+        <div className="mx-auto text-white text-sm">Terminal</div>
+      </div>
 
-      <GameGrid
-        guesses={guesses}
-        evaluations={evaluations}
-        currentGuess={currentGuess}
-      />
-      {message && <p className="text-red-500 text-center mt-4">{message}</p>}
+      {/* Terminal Content */}
+      <div className="p-4">
+        <pre>
+          <span className="text-green-500">
+            {`$ Welcome back, hacker!\n$ Your mission is to find the hidden calculation that equals ${calculateExpression(
+              solution
+            )}.\n`}
+          </span>
+        </pre>
+
+        {/* Game Grid */}
+        <GameGrid
+          guesses={guesses}
+          evaluations={evaluations}
+          currentGuess={currentGuess}
+        />
+        {message && <p className="text-red-500 mt-4">{message}</p>}
+      </div>
+
+      {/* Keyboard */}
       <Keyboard onKeyPress={handleKeyPress} />
     </div>
   );

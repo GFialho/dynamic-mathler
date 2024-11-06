@@ -5,10 +5,11 @@ import bg from "@/assets/bg.jpg";
 import styles from "./HowToPlayModal.module.css"; // Import the CSS module
 
 const HowToPlayModal: React.FC = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [displayedText, setDisplayedText] = useState("");
   const [currentLine, setCurrentLine] = useState(0);
   const [typing, setTyping] = useState(true);
+  const [closing, setClosing] = useState(false);
 
   const username = "user";
   const prompt = `${username}@ubuntu:~$ `;
@@ -58,7 +59,8 @@ const HowToPlayModal: React.FC = () => {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      setOpen(false);
+      setClosing(true);
+      setTimeout(() => setOpen(false), 500);
     }
   };
 
@@ -70,18 +72,27 @@ const HowToPlayModal: React.FC = () => {
         </Dialog.Overlay>
 
         <Dialog.Content
-          className={`fixed inset-0 flex items-center justify-center ${styles.dialogSlideIn}`}
+          className={`fixed inset-0 flex items-center justify-center ${
+            closing ? styles.dialogSlideOut : styles.dialogSlideIn
+          }`}
           onKeyDown={handleKeyDown}
           tabIndex={0}
         >
           <div className="bg-black text-green-500 font-mono p-4 rounded-lg w-3/4 h-3/4 overflow-auto shadow-lg relative">
             {/* Terminal Header */}
-            <div className="absolute top-0 left-0 right-0 h-6 bg-gray-800 flex items-center px-2">
-              <div className="flex space-x-2">
-                <span className="w-3 h-3 bg-red-500 rounded-full inline-block"></span>
-                <span className="w-3 h-3 bg-yellow-500 rounded-full inline-block"></span>
-                <span className="w-3 h-3 bg-green-500 rounded-full inline-block"></span>
+            <div className="absolute top-0 left-0 right-0 h-6 bg-gray-900 flex items-center px-2 rounded-t-lg">
+              <div className={styles.macButtons}>
+                <span
+                  className={`${styles.macButton} ${styles.closeButton}`}
+                ></span>
+                <span
+                  className={`${styles.macButton} ${styles.minimizeButton}`}
+                ></span>
+                <span
+                  className={`${styles.macButton} ${styles.fullscreenButton}`}
+                ></span>
               </div>
+              <div className="mx-auto text-white text-sm">Terminal</div>
             </div>
 
             {/* Terminal Content */}
