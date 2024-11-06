@@ -68,7 +68,11 @@ const HowToPlayModal: React.FC = () => {
     <Dialog.Root open={open}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-cover bg-center w-screen h-screen bg-black">
-          <Image src={bg} alt="bg" className="fixed hidden sm:bg-cover sm:display" />
+          <Image
+            src={bg}
+            alt="bg"
+            className="fixed hidden sm:bg-cover sm:inline"
+          />
         </Dialog.Overlay>
 
         <Dialog.Content

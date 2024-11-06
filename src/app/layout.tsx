@@ -1,9 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Mathler Clone",
+  title: "Hack Nasa",
   description:
-    "A Mathler clone built with Next.js 14, TypeScript, and Tailwind CSS",
+    "Hack Nasa now, the world needs you!",
 };
 
 export default function RootLayout({
