@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import bg from "@/assets/bg.jpg";
-import styles from "./HowToPlayModal.module.css"; // Import the CSS module
+import styles from "./HowToPlayModal.module.css";
 
 const HowToPlayModal: React.FC = () => {
   const [open, setOpen] = useState(true);
@@ -68,7 +68,7 @@ const HowToPlayModal: React.FC = () => {
     <Dialog.Root open={open}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-cover bg-center w-screen h-screen bg-black">
-          <Image src={bg} alt="bg" className="fixed bg-cover" />
+          <Image src={bg} alt="bg" className="fixed hidden sm:bg-cover" />
         </Dialog.Overlay>
 
         <Dialog.Content

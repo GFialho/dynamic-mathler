@@ -3,30 +3,42 @@
 import GameGrid from "@/components/GameGrid";
 import HowToPlayModal from "@/components/HowToPlayModal";
 import Keyboard from "@/components/Keyboard";
-import useLocalStorage from "@/hooks/useLocalStorage";
 import { calculateExpression } from "@/utils/calculate";
 import { evaluateGuess, EvaluationResult } from "@/utils/evaluateGuess";
-import { getDailyPuzzle } from "@/utils/puzzles";
+import { getPuzzleByLevel, puzzles } from "@/utils/puzzles";
 import React, { useState, useEffect } from "react";
-
+import Cookies from "js-cookie";
+import ProgressBar from "@/components/ProgressBar";
+const totalLevels = 100;
 const HomePage: React.FC = () => {
-  const solution = getDailyPuzzle();
-  const [guesses, setGuesses] = useLocalStorage<string[]>("guesses", []);
-  const [evaluations, setEvaluations] = useLocalStorage<EvaluationResult[]>(
-    "evaluations",
-    []
-  );
-  const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [level, setLevel] = useState<number>(() => {
+    const savedLevel = Cookies.get("userLevel");
+    return savedLevel ? parseInt(savedLevel, 10) : 1;
+  });
 
-  const initialLines = [
-    { type: "output", content: `$ Welcome back, hacker!` },
-    {
+  useEffect(() => {
+    Cookies.set("userLevel", level.toString(), { expires: 7 });
+  }, [level]);
+
+  // Get the puzzle for the current level
+  const [solution, setSolution] = useState<string>(getPuzzleByLevel(level));
+
+  const [guesses, setGuesses] = useState<string[]>([]);
+  const [evaluations, setEvaluations] = useState<EvaluationResult[]>([]);
+  const [currentGuess, setCurrentGuess] = useState<string>("");
+  const [initialLines, setInitialLines] = useState(() => {
+    const lines = [];
+    if (level === 1) {
+      lines.push({ type: "output", content: `$ Welcome back, hacker!` });
+    }
+    lines.push({
       type: "output",
-      content: `$ Your mission is to find the hidden calculation that equals ${calculateExpression(
+      content: `$ Level ${level}: Your mission is to find the hidden calculation that equals ${calculateExpression(
         solution
       )}.`,
-    },
-  ];
+    });
+    return lines;
+  });
 
   const [terminalLines, setTerminalLines] = useState<
     {
@@ -46,7 +58,7 @@ const HomePage: React.FC = () => {
     if (currentLineIndex >= initialLines.length) return;
 
     const currentLineContent = initialLines[currentLineIndex].content;
-    const typingSpeed = 50; // Adjust typing speed (in milliseconds)
+    const typingSpeed = 50;
 
     // Type one character at a time
     const typingTimeout = setTimeout(() => {
@@ -64,6 +76,24 @@ const HomePage: React.FC = () => {
 
     return () => clearTimeout(typingTimeout);
   }, [currentCharIndex, currentLineIndex]);
+
+  useEffect(() => {
+    // Update initial lines when level or solution changes
+    const newInitialLines = [];
+    if (level === 1) {
+      newInitialLines.push({
+        type: "output",
+        content: `$ Welcome back, hacker!`,
+      });
+    }
+    newInitialLines.push({
+      type: "output",
+      content: `$ Level ${level}: Your mission is to find the hidden calculation that equals ${calculateExpression(
+        solution
+      )}.`,
+    });
+    setInitialLines(newInitialLines);
+  }, [level, solution]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -159,6 +189,7 @@ const HomePage: React.FC = () => {
       ]);
 
       if (currentGuess === solution || guesses.length + 1 === 6) {
+        // Level completed
         setTerminalLines([
           ...newLines,
           {
@@ -167,6 +198,31 @@ const HomePage: React.FC = () => {
             subtype: "success",
           },
         ]);
+
+        // Proceed to the next level after a short delay
+        setTimeout(() => {
+          if (level < totalLevels) {
+            setLevel((prevLevel) => prevLevel + 1);
+            // Reset game state for the new level
+            setSolution(getPuzzleByLevel(level + 1));
+            setGuesses([]);
+            setEvaluations([]);
+            setCurrentGuess("");
+            setCurrentLineIndex(0);
+            setCurrentCharIndex(0);
+            setDisplayedText("");
+            setTerminalLines([]);
+          } else {
+            // All levels completed - Hacked NASA
+            setTerminalLines([
+              {
+                type: "output",
+                content: "Access Granted: You have successfully hacked NASA!",
+                subtype: "success",
+              },
+            ]);
+          }
+        }, 2000); // Delay before moving to the next level
       }
     }, 1000); // Simulate delay
   };
@@ -179,8 +235,6 @@ const HomePage: React.FC = () => {
       onEnter();
     } else if (key === "C") {
       setCurrentGuess("");
-    } else if (key === "=") {
-      // Do nothing for now
     } else {
       if (currentGuess.length < 8) {
         setCurrentGuess((prev) => prev + key);
@@ -199,6 +253,11 @@ const HomePage: React.FC = () => {
           <span className="w-3 h-3 bg-green-500 rounded-full inline-block"></span>
         </div>
         <div className="mx-auto text-white text-sm">Terminal</div>
+      </div>
+
+      {/* Progress Bar */}
+      <div className="px-4">
+        <ProgressBar level={level} totalLevels={totalLevels} />
       </div>
 
       {/* Terminal Content */}
