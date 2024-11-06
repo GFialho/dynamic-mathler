@@ -25,7 +25,7 @@ Welcome to the **Mathler Game - Hack Nasa** repository! This project is a web-ba
 
 ## Demo
 
-[Live Demo](#) _(https://hacknasa.vercel.app/)_
+[Live Demo](https://hacknasa.vercel.app/) 
 
 ---
 
