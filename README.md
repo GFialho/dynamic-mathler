@@ -161,6 +161,7 @@ The coverage report will be displayed in the terminal and can be viewed in detai
 ```
 
 ### Running Cypress Tests
+![Testing coverage](src/assets/cypress.png)
 
 We use Cypress for end-to-end testing to ensure the application works as expected.
 
