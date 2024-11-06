@@ -19,3 +19,18 @@ body {
   color: #00ff00; /* Bright green text */
   font-family: Menlo, Monaco, "Courier New", monospace;
 }
+
+.animate-pulse {
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}

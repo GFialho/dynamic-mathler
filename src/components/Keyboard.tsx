@@ -13,7 +13,7 @@ const keys = [
 
 const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress }) => {
   return (
-    <div className="flex flex-wrap mt-4 self-center w-full justify-start ml-20">
+    <div className="flex flex-wrap mt-4 self-center w-full justify-center fixed bottom-10">
       {keys.flat().map((key) => (
         <button
           key={key}

@@ -34,11 +34,43 @@ const HomePage: React.FC = () => {
       content: string;
       subtype?: "error" | "success" | "info";
     }[]
-  >(initialLines);
+  >([]);
+
+  // Typing animation state
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [currentCharIndex, setCurrentCharIndex] = useState(0);
+
+  useEffect(() => {
+    // If all lines have been typed, exit the effect
+    if (currentLineIndex >= initialLines.length) return;
+
+    const currentLineContent = initialLines[currentLineIndex].content;
+    const typingSpeed = 50; // Adjust typing speed (in milliseconds)
+
+    // Type one character at a time
+    const typingTimeout = setTimeout(() => {
+      setDisplayedText((prev) => prev + currentLineContent[currentCharIndex]);
+      setCurrentCharIndex((prev) => prev + 1);
+    }, typingSpeed);
+
+    // When the current line is fully typed
+    if (currentCharIndex >= currentLineContent.length) {
+      clearTimeout(typingTimeout);
+      setDisplayedText((prev) => prev + "\n"); // Add a newline at the end of the line
+      setCurrentLineIndex((prev) => prev + 1);
+      setCurrentCharIndex(0);
+    }
+
+    return () => clearTimeout(typingTimeout);
+  }, [currentCharIndex, currentLineIndex]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const key = event.key;
+
+      // Prevent input during typing effect
+      if (currentLineIndex < initialLines.length) return;
 
       if (
         (key >= "0" && key <= "9") ||
@@ -57,7 +89,7 @@ const HomePage: React.FC = () => {
     window.addEventListener("keydown", handleKeyDown);
 
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentGuess]);
+  }, [currentGuess, currentLineIndex]);
 
   const getTextColorClass = (line: { type: string; subtype?: string }) => {
     if (line.type === "command") return "text-green-500";
@@ -70,9 +102,11 @@ const HomePage: React.FC = () => {
   const onEnter = () => {
     if (currentGuess.length === 0) return;
 
-    // Reset terminalLines to initial messages and add the new command
+    // Only proceed if typing effect is complete
+    if (currentLineIndex < initialLines.length) return;
+
+    // Reset terminalLines to include only the latest command and output
     setTerminalLines([
-      ...initialLines,
       { type: "command", content: currentGuess },
       { type: "output", content: "Processing...", subtype: "info" },
     ]);
@@ -82,10 +116,7 @@ const HomePage: React.FC = () => {
       const solutionResult = calculateExpression(solution);
 
       // Replace the "Processing..." message
-      const newLines = [
-        ...initialLines,
-        { type: "command", content: currentGuess },
-      ];
+      const newLines = [{ type: "command", content: currentGuess }];
 
       if (result === null) {
         // Invalid expression
@@ -137,10 +168,13 @@ const HomePage: React.FC = () => {
           },
         ]);
       }
-    }, 1000);
+    }, 1000); // Simulate delay
   };
 
   const handleKeyPress = (key: string) => {
+    // Prevent input during typing effect
+    if (currentLineIndex < initialLines.length) return;
+
     if (key === "Enter") {
       onEnter();
     } else if (key === "C") {
@@ -155,7 +189,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-black text-green-500 font-mono overflow-hidden">
+    <div className="w-full h-screen bg-black text-green-500 font-mono overflow-hidden flex flex-col">
       <HowToPlayModal />
       {/* Terminal Header */}
       <div className="flex items-center h-6 bg-gray-900 px-2">
@@ -168,27 +202,39 @@ const HomePage: React.FC = () => {
       </div>
 
       {/* Terminal Content */}
-      <div className="p-4">
-        {terminalLines.map((line, index) => (
-          <pre key={index} className={getTextColorClass(line)}>
-            {line.type === "command" ? `$ ${line.content}` : line.content}
-          </pre>
-        ))}
-        {currentGuess && (
-          <pre>
-            <span className="text-green-500">
-              $ {currentGuess}
-              <span className="animate-pulse">█</span>
-            </span>
-          </pre>
-        )}
+      <div className="flex-1 p-4 overflow-hidden flex flex-col">
+        {/* Terminal Messages */}
+        <div className="terminal-messages overflow-y-auto h-40 flex-shrink-0 ">
+          <pre className="whitespace-pre-wrap">{displayedText}</pre>
+
+          {/* Once typing is complete, display other messages and current input */}
+          {currentLineIndex >= initialLines.length && (
+            <>
+              {terminalLines.map((line, index) => (
+                <pre key={index} className={getTextColorClass(line)}>
+                  {line.type === "command" ? `$ ${line.content}` : line.content}
+                </pre>
+              ))}
+              {currentGuess && (
+                <pre>
+                  <span className="text-green-500">
+                    $ {currentGuess}
+                    <span className="animate-pulse">█</span>
+                  </span>
+                </pre>
+              )}
+            </>
+          )}
+        </div>
 
         {/* Game Grid */}
-        <GameGrid
-          guesses={guesses}
-          evaluations={evaluations}
-          currentGuess={currentGuess}
-        />
+        <div className="flex flex-shrink-0 justify-center w-full -mt-10">
+          <GameGrid
+            guesses={guesses}
+            evaluations={evaluations}
+            currentGuess={currentGuess}
+          />
+        </div>
       </div>
 
       {/* Keyboard */}
