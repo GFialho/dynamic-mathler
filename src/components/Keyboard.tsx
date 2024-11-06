@@ -13,7 +13,7 @@ const keys = [
 
 const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress }) => {
   return (
-    <div className="flex flex-col items-center mt-4">
+    <div className="flex flex-col items-center mt-4 text-green-500">
       {keys.map((row, idx) => (
         <div key={idx} className="flex space-x-2 mb-2">
           {row.map((key) => (
