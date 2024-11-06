@@ -1,82 +1,104 @@
 import React, { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
+import Image from "next/image";
+import bg from "@/assets/bg.jpg";
 
 const HowToPlayModal: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentLine, setCurrentLine] = useState(0);
+  const [typing, setTyping] = useState(true);
+
+  const username = "user";
+  const prompt = `${username}@ubuntu:~$ `;
+
+  const terminalLines = [
+    "Welcome to Mathler!",
+    "",
+    "Try to find the hidden calculation in 6 guesses!",
+    "After each guess, the color of the tiles will change to show how close you are to the solution.",
+    "",
+    "Green tiles are in the correct place.",
+    "Orange tiles are in the solution, but in a different place.",
+    "Gray tiles are not in the solution.",
+    "",
+    "Calculate / or * before + or - (order of operations).",
+    "",
+    "Press Enter to start playing...",
+  ];
+
   useEffect(() => {
     setOpen(true);
   }, []);
 
+  useEffect(() => {
+    if (typing) {
+      const line = terminalLines[currentLine];
+      let index = 0;
+
+      const typeInterval = setInterval(() => {
+        if (index <= line.length) {
+          setDisplayedText((prev) => prev + line.charAt(index));
+          index++;
+        } else {
+          clearInterval(typeInterval);
+          setDisplayedText((prev) => prev + "\n");
+          if (currentLine < terminalLines.length - 1) {
+            setCurrentLine((prev) => prev + 1);
+          } else {
+            setTyping(false);
+          }
+        }
+      }, 10);
+
+      return () => clearInterval(typeInterval);
+    }
+  }, [currentLine, typing]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      setOpen(false);
+    }
+  };
+
   return (
     <Dialog.Root open={open}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-        <Dialog.Content className="fixed inset-0 flex items-center justify-center text-black">
-          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
-            {/* Close Button */}
-            <Dialog.Close asChild>
-              <button className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
-                &times;
-              </button>
-            </Dialog.Close>
+        <Dialog.Overlay className="fixed inset-0 bg-cover bg-center w-screen h-screen bg-black">
+          <Image src={bg} alt="bg" className="fixed bg-cover" />
+        </Dialog.Overlay>
 
-            {/* Modal Header */}
-            <Dialog.Title className="text-xl font-bold mb-4">
-              How to Play Mathler
-            </Dialog.Title>
-
-            {/* Modal Content */}
-            <p className="mb-4">
-              Try to find the hidden calculation in 6 guesses!
-            </p>
-            <p className="mb-4">
-              After each guess, the color of the tiles will change to show how
-              close you are to the solution.
-            </p>
-
-            {/* Example Tile Row */}
-            <div className="flex space-x-1 mb-4 justify-center">
-              <div className="w-10 h-10 flex items-center justify-center text-white font-bold bg-green-500 rounded">
-                3
-              </div>
-              <div className="w-10 h-10 flex items-center justify-center text-white font-bold bg-gray-500 rounded">
-                7
-              </div>
-              <div className="w-10 h-10 flex items-center justify-center text-white font-bold bg-green-500 rounded">
-                -
-              </div>
-              <div className="w-10 h-10 flex items-center justify-center text-white font-bold bg-yellow-500 rounded">
-                6
-              </div>
-              <div className="w-10 h-10 flex items-center justify-center text-white font-bold bg-gray-500 rounded">
-                1
+        <Dialog.Content
+          className="fixed inset-0 flex items-center justify-center"
+          onKeyDown={handleKeyDown}
+          tabIndex={0}
+        >
+          <div className="bg-black text-green-500 font-mono p-4 rounded-lg w-3/4 h-3/4 overflow-auto shadow-lg relative">
+            {/* Terminal Header */}
+            <div className="absolute top-0 left-0 right-0 h-6 bg-gray-800 flex items-center px-2">
+              <div className="flex space-x-2">
+                <span className="w-3 h-3 bg-red-500 rounded-full inline-block"></span>
+                <span className="w-3 h-3 bg-yellow-500 rounded-full inline-block"></span>
+                <span className="w-3 h-3 bg-green-500 rounded-full inline-block"></span>
               </div>
             </div>
 
-            {/* Explanation */}
-            <ul className="text-sm mb-4 space-y-2">
-              <li>
-                <span className="font-bold text-green-500">Green</span> are in
-                the correct place.
-              </li>
-              <li>
-                <span className="font-bold text-yellow-500">Orange</span> are in
-                the solution, but in a different place.
-              </li>
-              <li>
-                <span className="font-bold text-gray-500">Gray</span> are not in
-                the solution.
-              </li>
-              <li>
-                Calculate <code>/</code> or <code>*</code> before <code>+</code>{" "}
-                or <code>-</code> (order of operations).
-              </li>
-            </ul>
+            {/* Terminal Content */}
+            <pre className="mt-6 whitespace-pre-wrap">
+              {displayedText}
+              {typing ? (
+                <span className="animate-pulse">█</span>
+              ) : (
+                <span>
+                  {prompt}
+                  <span className="animate-pulse">█</span>
+                </span>
+              )}
+            </pre>
 
-            {/* Play Button */}
             <Dialog.Close asChild onClick={() => setOpen(false)}>
-              <button className="w-full py-2 bg-black text-white font-bold rounded-md mt-4">
-                Play Mathler Now
+              <button className="absolute top-0 right-1 text-gray-400 hover:text-gray-600">
+                &times;
               </button>
             </Dialog.Close>
           </div>
