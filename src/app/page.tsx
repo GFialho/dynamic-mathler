@@ -228,7 +228,7 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* Game Grid */}
-        <div className="flex flex-shrink-0 justify-center w-full -mt-10">
+        <div className="flex flex-shrink-0 justify-center w-full sm:-mt-10">
           <GameGrid
             guesses={guesses}
             evaluations={evaluations}

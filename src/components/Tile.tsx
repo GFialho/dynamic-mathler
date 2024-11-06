@@ -45,7 +45,7 @@ const Tile: React.FC<TileProps> = ({ value, status }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className={`w-12 h-12 md:w-16 md:h-16 border ${currentStyle.border} flex items-center justify-center text-2xl font-mono ${currentStyle.bg} ${currentStyle.text} rounded-sm ${currentStyle.shadow} overflow-hidden`}
+            className={`h-8 w-8 sm:w-12 sm:h-12 md:w-16 md:h-16 border ${currentStyle.border} flex items-center justify-center text-2xl font-mono ${currentStyle.bg} ${currentStyle.text} rounded-sm ${currentStyle.shadow} overflow-hidden`}
           >
             <span className="typing-animation">{value}</span>
           </motion.div>
