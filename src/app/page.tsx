@@ -9,14 +9,6 @@ import { evaluateGuess, EvaluationResult } from "@/utils/evaluateGuess";
 import { getDailyPuzzle } from "@/utils/puzzles";
 import React, { useState, useEffect } from "react";
 
-const getTextColorClass = (line: { type: string; subtype?: string }) => {
-  if (line.type === "command") return "text-green-500";
-  if (line.subtype === "error") return "text-red-500";
-  if (line.subtype === "success") return "text-green-500";
-  if (line.subtype === "info") return "text-gray-500";
-  return "text-white";
-};
-
 const HomePage: React.FC = () => {
   const solution = getDailyPuzzle();
   const [guesses, setGuesses] = useLocalStorage<string[]>("guesses", []);
@@ -25,13 +17,8 @@ const HomePage: React.FC = () => {
     []
   );
   const [currentGuess, setCurrentGuess] = useState<string>("");
-  const [terminalLines, setTerminalLines] = useState<
-    {
-      type: "command" | "output";
-      content: string;
-      subtype?: "error" | "success" | "info";
-    }[]
-  >([
+
+  const initialLines = [
     { type: "output", content: `$ Welcome back, hacker!` },
     {
       type: "output",
@@ -39,7 +26,15 @@ const HomePage: React.FC = () => {
         solution
       )}.`,
     },
-  ]);
+  ];
+
+  const [terminalLines, setTerminalLines] = useState<
+    {
+      type: string;
+      content: string;
+      subtype?: "error" | "success" | "info";
+    }[]
+  >(initialLines);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -64,29 +59,38 @@ const HomePage: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentGuess]);
 
+  const getTextColorClass = (line: { type: string; subtype?: string }) => {
+    if (line.type === "command") return "text-green-500";
+    if (line.subtype === "error") return "text-red-500";
+    if (line.subtype === "success") return "text-green-500";
+    if (line.subtype === "info") return "text-gray-500";
+    return "text-white";
+  };
+
   const onEnter = () => {
     if (currentGuess.length === 0) return;
 
-    // Add the current guess as a command in the terminal
-    setTerminalLines((prevLines) => [
-      ...prevLines,
+    // Reset terminalLines to initial messages and add the new command
+    setTerminalLines([
+      ...initialLines,
       { type: "command", content: currentGuess },
       { type: "output", content: "Processing...", subtype: "info" },
     ]);
-
-    setCurrentGuess("");
 
     setTimeout(() => {
       const result = calculateExpression(currentGuess);
       const solutionResult = calculateExpression(solution);
 
-      // Remove the "Processing..." message
-      setTerminalLines((prevLines) => prevLines.slice(0, -1));
+      // Replace the "Processing..." message
+      const newLines = [
+        ...initialLines,
+        { type: "command", content: currentGuess },
+      ];
 
       if (result === null) {
         // Invalid expression
-        setTerminalLines((prevLines) => [
-          ...prevLines,
+        setTerminalLines([
+          ...newLines,
           {
             type: "output",
             content: "bash: syntax error: invalid expression",
@@ -98,8 +102,8 @@ const HomePage: React.FC = () => {
 
       if (result !== solutionResult) {
         // Incorrect result
-        setTerminalLines((prevLines) => [
-          ...prevLines,
+        setTerminalLines([
+          ...newLines,
           {
             type: "output",
             content: `Error: Calculation result does not equal ${solutionResult}`,
@@ -114,8 +118,8 @@ const HomePage: React.FC = () => {
       setGuesses([...guesses, currentGuess]);
       setEvaluations([...evaluations, evaluation]);
 
-      setTerminalLines((prevLines) => [
-        ...prevLines,
+      setTerminalLines([
+        ...newLines,
         {
           type: "output",
           content: "Command executed successfully",
@@ -124,8 +128,8 @@ const HomePage: React.FC = () => {
       ]);
 
       if (currentGuess === solution || guesses.length + 1 === 6) {
-        setTerminalLines((prevLines) => [
-          ...prevLines,
+        setTerminalLines([
+          ...newLines,
           {
             type: "output",
             content: `Mission Complete! The solution was ${solution}`,
@@ -133,7 +137,7 @@ const HomePage: React.FC = () => {
           },
         ]);
       }
-    }, 1000); // Simulate delay
+    }, 1000);
   };
 
   const handleKeyPress = (key: string) => {
